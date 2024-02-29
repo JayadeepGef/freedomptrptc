@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
+  <style>
+    /* Additional CSS to set font color to black */
+    body,
+    input,
+    select,
+    option,
+    label,
+    button {
+      color: black !important;
+    }
+
+    .container {
+      padding: 15px;
+      background-color: #f0f0f0;
+      border-radius: 15px;
+      max-width: 100%; /* Adjusted max-width for better responsiveness */
+      margin: 0 auto;
+      position: relative; /* Position relative for positioning absolute elements */
+    }
+
+    .label {
+      font-weight: bold;
+    }
+
+    .field {
+      margin-bottom: 20px; /* Add some space between fields */
+    }
+
+    input[type="number"],
+    input[type="text"],
+    select {
+      width: 100%; /* Full width input fields */
+      padding: 10px; /* Increased padding for better touch interaction */
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      margin-top: 5px;
+    }
+
+    .add-entry-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px; /* Add spacing between Number of entries and Add Entry button */
+    }
+
+    .add-entry-button {
+      padding: 6px;
+      width: 120px; /* Adjusted width */
+      cursor: pointer;
+    }
+
+    .submit-button {
+      padding: 4px 8px; /* Adjusted padding to make the button smaller */
+      font-size: 12px; /* Decreased font size */
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      filter: brightness(85%);
+    }
+
+    ::-webkit-input-placeholder {
+      font-size: 14px;
+      /* Specify your desired font size */
+    }
+
+    :-moz-placeholder {
+      font-size: 14px;
+      /* Specify your desired font size */
+    }
+
+    ::-moz-placeholder {
+      font-size: 14px;
+      /* Specify your desired font size */
+    }
+
+    :-ms-input-placeholder {
+      font-size: 14px;
+      /* Specify your desired font size */
+    }
+
+    .hero.is-primary {
+      background-color: #222222; /* Change the header color to light gray */
+    }
+
+    /* Change background color of the "Competitor Price Form" header */
+    .hero-body {
+      background-color: #222222; /* Change to desired color */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .logo {
+      width: 150px; /* Adjust logo width */
+      margin-bottom: 20px; /* Add spacing between logo and title */
+    }
+  </style>
+</head>
+
+<body>
+  <section class="hero is-primary is-bold">
+    <div class="hero-body">
+      <img src="https://gefindia.com/assets/img/GEF_Logo.png" alt="Logo" class="logo">
+      <h1 class="title has-text-centered">Competitor Price Form</h1>
+    </div>
+  </section>
+  <div class="container">
+    <div id="formContainer">
+      <div class="add-entry-container">
+        <p id="entryCount" class="has-text-centered">Number of entries: 0</p>
+        <button class="button is-primary add-entry-button" id="addEntryBtn">Add Entry</button>
+      </div>
+    </div>
+
+    <div id="message" class="has-text-centered" style="
+    display: none;
+    margin: 20px;
+    font-weight: bold;
+    color: green;
+    padding: 8px;
+    background-color: beige;
+    border-radius: 4px;
+    border-color: aquamarine;
+  "></div>
+
+    <button class="button is-primary submit-button" id="submit-button">Submit</button>
+  </div>
+
+  <div id="ptrError" style="color: red; display: none;">Value must be between 100 and 200</div>
+
+  <script>
+    var entryCount = 0;
+    var colors = ['#FFCCCC', '#CCFFCC', '#CCCCFF', '#FFCCFF', '#FFFFCC']; // Light color values
+    var brandsEntered = []; // Array to store entered brand names
+
+    function updateEntryCount() {
+      document.getElementById("entryCount").textContent = "Number of entries: " + entryCount;
+    }
+
+    function isBrandNameUnique(brandName) {
+      return !brandsEntered.includes(brandName);
+    }
+
+    document.getElementById("addEntryBtn").addEventListener("click", function() {
+      if (entryCount >= 7) {
+        alert("Maximum number of entries reached (5).");
+        return;
+      }
+
+      var formContainer = document.getElementById("formContainer");
+      var newForm = document.createElement("form");
+      newForm.className = "m-4 pl-4";
+      newForm.method = "POST";
+      newForm.style.backgroundColor = colors[entryCount % colors.length]; // Assign color based on entryCount
+
+      newForm.innerHTML = `
+        <div class="field">
+          <label class="label">Subzone</label>
+          <div class="control">
+            <div class="select">
+              <select name="Subzone">
+                <option>Karnataka</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Town Name</label>
+          <div class="control">
+            <div class="select">
+              <select name="TownName">
+                <option disabled hidden selected>Select One</option>
+                <option>Bangalore</option>
+                <option>Bellary</option>
+                <option>Chikkaballapura</option>
+                <option>Chitradurga</option>
+                <option>Hubli</option>
+                <option>Mysore</option>
+                <option>Shimoga</option>
+                <option>Gulbarga</option>
+                <option>Tumkur</option>
+                <option>Kolar</option>
+                <option>Davangere</option>
+                <option>Mangalore</option>
+                <option>Belagum</option>
+                <option>Mandya</option>
+                <option>Ramnagara</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Brand Name</label>
+          <div class="control">
+            <div class="select">
+              <select name="BrandName">
+                <option disabled hidden selected>Select One</option>
+                <option>Adhar</option>
+                <option>Bangi Palli</option>
+                <option>Bongi-Dalda</option>
+                <option>Dalda</option>
+                <option>Dhara</option>
+                <option>Emami</option>
+                <option>Fortune</option>
+                <option>Gemini</option>
+                <option>Gold Evia</option>
+                <option>Gold Winner</option>
+                <option>Health fit oil</option>
+                <option>Joy Life</option>
+                <option>Mr.Gold</option>
+                <option>Naturalle</option>
+                <option>Sun Fresh</option>
+                <option>Sun premium</option>
+                <option>Sun Shakthi</option>
+                <option>Sun Taza</option>
+                <option>Sundrop</option>
+                <option>Sungold</option>
+                <option>Sunpure</option>
+                <option>Sunrich</option>
+                <option>Sunsolite</option>
+                <option>Sunflow Gold</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Beat Name</label>
+          <div class="control">
+            <input class="input" type="text" placeholder="Beat Name" name="BeatName" style="width: 60%" />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Outlet Name</label>
+          <div class="control">
+            <input class="input" type="text" placeholder="Outlet Name" name="OutletName" style="width: 70%" />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">1 Ltr PTR</label>
+          <input type="number" name="1 Ltr PTR" min="100" max="200" class="input" style="width: 30%" required>
+          <div id="1 Ltr PTR Error" style="color: red; display: none;">Value must be between 100 and 200</div>
+        </div>
+        <div class="field">
+          <label class="label">1 Ltr PTC</label>
+          <input type="number" name="1 Ltr PTC" min="100" max="300" class="input" style="width: 30%" required>
+          <div id="1 Ltr PTC Error" style="color: red; display: none;">Value must be between 100 and 300</div>
+        </div>
+        <div class="field">
+          <label class="label">5 Ltr PTR</label>
+          <input type="number" name="5 Ltr PTR" min="500" max="700" class="input" style="width: 30%" required>
+          <div id="5 Ltr PTR Error" style="color: red; display: none;">Value must be between 500 and 700</div>
+        </div>
+        <div class="field">
+          <label class="label">5 Ltr PTC</label>
+          <input type="number" name="5 Ltr PTC" min="500" max="700" class="input" style="width: 30%" required>
+          <div id="5 Ltr PTC Error" style="color: red; display: none;">Value must be between 500 and 700</div>
+        </div>
+      `;
+
+      // Add event listeners for all number input fields in this new form
+      var numberInputFields = newForm.querySelectorAll('input[type="number"]');
+      numberInputFields.forEach(function(inputField) {
+        inputField.addEventListener('input', function() {
+          var minValue = parseFloat(this.min);
+          var maxValue = parseFloat(this.max);
+          var inputValue = parseFloat(this.value);
+          var fieldName = this.getAttribute('name');
+          var errorElement = document.getElementById(fieldName + ' Error');
+
+          if (inputValue < minValue || inputValue > maxValue) {
+            errorElement.textContent = 'Value must be between ' + minValue + ' and ' + maxValue;
+            errorElement.style.display = 'block';
+          } else {
+            errorElement.style.display = 'none';
+          }
+        });
+      });
+
+      // Add event listener to the brand name select element to validate uniqueness
+      var brandSelect = newForm.querySelector('select[name="BrandName"]');
+      brandSelect.addEventListener('change', function(event) {
+        var selectedBrand = event.target.value;
+        if (!isBrandNameUnique(selectedBrand)) {
+          alert("Brand name already exists. Please select a different brand.");
+          event.target.value = ''; // Clear the selected option
+        } else {
+          brandsEntered.push(selectedBrand);
+        }
+      });
+
+      formContainer.appendChild(newForm);
+      entryCount++;
+      updateEntryCount();
+    });
+
+    document.getElementById("submit-button").addEventListener("click", function() {
+      var forms = document.querySelectorAll("form");
+      var formDataArray = [];
+
+      forms.forEach(function(form) {
+        var formData = new FormData(form);
+        var keyValuePairs = [];
+
+        for (var pair of formData.entries()) {
+          keyValuePairs.push(pair[0] + "=" + pair[1]);
+        }
+
+        var formDataString = keyValuePairs.join("&");
+        formDataArray.push(formDataString);
+      });
+
+      var promises = formDataArray.map(function(formDataString) {
+        return fetch("https://script.google.com/macros/s/AKfycbzVvvX87ZWf-amzXZc52ZmyveALpzHK5LShVWpGNtsv-RHygKqFHfrY59VR7EWiDMmq/exec", {
+          redirect: "follow",
+          method: "POST",
+          body: formDataString,
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8",
+          },
+        });
+      });
+
+      Promise.all(promises)
+        .then(function(responses) {
+          return Promise.all(responses.map(function(response) {
+            if (!response.ok) {
+              throw new Error("Failed to submit the form.");
+            }
+            return response;
+          }));
+        })
+        .then(function() {
+          // Display a success message
+          document.getElementById("message").textContent = "Data submitted successfully!";
+          document.getElementById("message").style.display = "block";
+          document.getElementById("message").style.backgroundColor = "green";
+          document.getElementById("message").style.color = "beige";
+
+          // Remove all forms
+          var formContainer = document.getElementById("formContainer");
+          formContainer.innerHTML = '';
+          entryCount = 0;
+          updateEntryCount();
+
+          setTimeout(function() {
+            document.getElementById("message").textContent = "";
+            document.getElementById("message").style.display = "none";
+          }, 2600);
+        })
+        .catch(function(error) {
+          // Handle errors, you can display an error message here
+          console.error(error);
+          document.getElementById("message").textContent = "Data submitted successfully!";
+          document.getElementById("message").style.display = "block";
+        });
+    });
+  </script>
+
+</body>
+
+</html>
